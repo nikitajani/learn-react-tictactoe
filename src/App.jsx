@@ -3,11 +3,21 @@ import "./App.css";
 import Square from "./square";
 
 function App() {
+  const [xIsNext, setXIsNext] = useState(true);
   const [squares, setSquares] = useState(Array(9).fill(null));
+
   const handleClick = (i) => {
-    const nextSqaure = squares.slice();
-    nextSqaure[i] = "X";
-    setSquares(nextSqaure);
+    if (squares[i]) {
+      return;
+    }
+    const nextSqaures = squares.slice();
+    if (xIsNext) {
+      nextSqaures[i] = "X";
+    } else {
+      nextSqaures[i] = "O";
+    }
+    setSquares(nextSqaures);
+    setXIsNext(!xIsNext);
   };
   return (
     <>
