@@ -1,11 +1,9 @@
+/* eslint-disable react/prop-types */
 import { useState } from "react";
 import "./App.css";
 import Square from "./square";
 
-function App() {
-  const [xIsNext, setXIsNext] = useState(true);
-  const [squares, setSquares] = useState(Array(9).fill(null));
-
+function App({ xIsNext, squares, onPlay }) {
   const calculateWinner = () => {
     const lines = [
       [0, 1, 2],
@@ -48,8 +46,8 @@ function App() {
     } else {
       nextSqaures[i] = "O";
     }
-    setSquares(nextSqaures);
-    setXIsNext(!xIsNext);
+
+    onPlay(nextSqaures);
   };
 
   return (
@@ -75,4 +73,47 @@ function App() {
   );
 }
 
-export default App;
+export default function Game() {
+  const [history, setHistory] = useState([Array(9).fill(null)]);
+  const [currentMove, setCurrentMove] = useState(0);
+  const currentSquare = history[currentMove];
+  const xIsNext = currentMove % 2 === 0;
+
+  const handlePlay = (nextSqaures) => {
+    const nextHistory = [...history.slice(0, currentMove + 1), nextSqaures];
+    setHistory(nextHistory);
+    setCurrentMove(nextHistory.length - 1);
+  };
+
+  const jumpTo = (nextMove) => {
+    setCurrentMove(nextMove);
+    if (!nextMove) setHistory([Array(9).fill(null)]);
+  };
+
+  const moves = history.map((square, move) => {
+    let description;
+    if (move > 0) {
+      description = "Go to move " + move;
+    } else {
+      description = "Go to game start";
+    }
+    return (
+      <li key={move}>
+        <button onClick={() => jumpTo(move)}>{description}</button>
+      </li>
+    );
+  });
+
+  return (
+    <>
+      <div className="game">
+        <div>
+          <App xIsNext={xIsNext} squares={currentSquare} onPlay={handlePlay} />
+        </div>
+        <div>
+          <ol>{moves}</ol>
+        </div>
+      </div>
+    </>
+  );
+}

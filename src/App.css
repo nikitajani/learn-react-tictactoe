@@ -8,3 +8,7 @@
 .board-row {
   display: flex;
 }
+
+.game {
+  display: flex;
+}
